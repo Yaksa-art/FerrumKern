@@ -6,12 +6,8 @@ description = "FerrumKern — open-source x86_64 kernel, Limine boot, no_std"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
-limine = "0.5"
-x86_64 = "0.14"
-spin = "0.9"
-volatile = "0.5"
-uart_16550 = "0.3"
-linked_list_allocator = "0.10"
+limine = "0.6"
+x86_64 = "0.15"
 
 [profile.dev]
 panic = "abort"

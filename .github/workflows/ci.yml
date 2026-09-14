@@ -11,8 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@nightly
+      - uses: dtolnay/rust-toolchain@master
         with:
+          toolchain-file: rust-toolchain.toml
           components: rustfmt
       - name: Check formatting (kernel)
         run: cargo fmt --check --manifest-path kernel/Cargo.toml
@@ -21,12 +22,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@nightly
+      - uses: dtolnay/rust-toolchain@master
         with:
-          targets: x86_64-unknown-none
+          toolchain-file: rust-toolchain.toml
           components: clippy
       - name: Clippy (freestanding)
         run: cargo clippy --manifest-path kernel/Cargo.toml --target x86_64-unknown-none -- -D warnings
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain-file: rust-toolchain.toml
+      - name: Build kernel (release, freestanding)
+        run: cargo build --manifest-path kernel/Cargo.toml --target x86_64-unknown-none --release
 
   c-lint:
     runs-on: ubuntu-latest
@@ -34,6 +45,16 @@ jobs:
       - uses: actions/checkout@v4
       - name: Syntax-check kernel C sources
         run: gcc -fsyntax-only -ffreestanding -Wall -Wextra kernel/c/string.c kernel/c/uart.c kernel/c/fb.c
+
+  scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax-check shell scripts
+        run: |
+          sh -n boot/get-limine.sh
+          sh -n scripts/mkiso.sh
+          sh -n scripts/run-qemu.sh
 
   markdown:
     runs-on: ubuntu-latest
@@ -44,3 +65,5 @@ jobs:
           test -f README.md
           test -d docs
           test -f docs/roadmap.md
+          test -f LICENSE-MIT
+          test -f LICENSE-APACHE
