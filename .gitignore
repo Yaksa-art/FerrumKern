@@ -1,0 +1,6 @@
+target/
+sysroot/
+*.iso
+*.elf
+.vscode/
+.idea/
