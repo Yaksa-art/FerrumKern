@@ -1,0 +1,8 @@
+* text=auto
+*.sh text eol=lf
+*.ld text eol=lf
+*.rs text eol=lf
+*.toml text eol=lf
+*.iso binary
+*.elf binary
+*.fd binary

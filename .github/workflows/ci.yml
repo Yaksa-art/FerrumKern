@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rustfmt
+      - name: Check formatting (kernel)
+        run: cargo fmt --check --manifest-path kernel/Cargo.toml
+
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          targets: x86_64-unknown-none
+          components: clippy
+      - name: Clippy (freestanding)
+        run: cargo clippy --manifest-path kernel/Cargo.toml --target x86_64-unknown-none -- -D warnings
+
+  c-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax-check kernel C sources
+        run: gcc -fsyntax-only -ffreestanding -Wall -Wextra kernel/c/string.c kernel/c/uart.c kernel/c/fb.c
+
+  markdown:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check README/docs exist
+        run: |
+          test -f README.md
+          test -d docs
+          test -f docs/roadmap.md
