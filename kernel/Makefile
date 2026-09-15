@@ -13,7 +13,7 @@ OVMF_VARS ?= /usr/share/OVMF/OVMF_VARS.fd
 .PHONY: build iso run clean
 
 build:
-	cargo build --target $(TARGET) --release
+	cd $(CURDIR) && cargo build --release
 	mkdir -p $(SYSROOT)
 	cp $(CRATE_ELF) $(KERNEL_ELF)
 
