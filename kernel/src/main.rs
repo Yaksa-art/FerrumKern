@@ -41,16 +41,12 @@ unsafe extern "C" fn kmain() -> ! {
     assert!(BASE_REVISION.is_supported());
     Serial::s("hello FerrumKern\r\n");
     if let Some(resp) = FB_REQ.response() {
-        for fb in resp.framebuffers() {
-            if fb.bpp() != 32 {
+        for fb in resp.framebuffers().iter().copied() {
+            if fb.bpp != 32 {
                 continue;
             }
-            let (w, h, pitch) = (
-                fb.width() as usize,
-                fb.height() as usize,
-                fb.pitch() as usize,
-            );
-            let addr = fb.addr() as *mut u8;
+            let (w, h, pitch) = (fb.width as usize, fb.height as usize, fb.pitch as usize);
+            let addr = fb.address() as *mut u8;
             for y in 0..h {
                 let bar = y < 48;
                 let (r, g, b) = if bar {
